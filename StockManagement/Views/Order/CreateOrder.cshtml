@@ -1,0 +1,73 @@
+﻿@model StockManagement.Models.Product
+@{
+    ViewData["Title"] = "Place Order";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center">Order: @Model.Name</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-5 text-center">
+                            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded" style="max-height: 200px;">
+                        </div>
+                        <div class="col-md-7">
+                            <h4>@Model.Name</h4>
+                            <p class="text-muted">@Model.Description</p>
+                            <hr>
+                            <div class="mb-3">
+                                <span class="fw-bold">Price: </span>
+                                <span class="text-success">@Model.Price.ToString("C")</span>
+                            </div>
+                            <div class="mb-3">
+                                <span class="fw-bold">Available: </span>
+                                <span class="badge bg-info">@Model.Quantity in stock</span>
+                            </div>
+
+                            <form asp-action="CreateOrder" method="post">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+
+                                <div class="form-group mb-3">
+                                    <label for="quantity" class="form-label">Quantity:</label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity"
+                                           min="1" max="@Model.Quantity" value="1" required>
+                                    <small class="form-text text-muted">Max: @Model.Quantity</small>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-check"></i> Confirm Order
+                                    </button>
+                                    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i> Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#quantity').on('change', function() {
+                let max = parseInt($(this).attr('max'));
+                let value = parseInt($(this).val());
+
+                if (value < 1) {
+                    $(this).val(1);
+                } else if (value > max) {
+                    $(this).val(max);
+                }
+            });
+        });
+    </script>
+}

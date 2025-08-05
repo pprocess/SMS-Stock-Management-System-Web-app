@@ -1,0 +1,60 @@
+﻿@model IEnumerable<StockManagement.Models.Order>
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="container mt-4">
+    <h2>My Orders</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info">@TempData["Message"]</div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.OrderDate.ToString("g")</td>
+                        <td>
+                            <span class="badge @(order.Status == "Pending" ? "bg-warning" : "bg-secondary")">
+                                @order.Status
+                            </span>
+                        </td>
+                        <td>
+                            <ul class="list-unstyled">
+                                @foreach (var item in order.OrderItems)
+                                {
+                                    <li>@item.Product.Name (Qty: @item.Quantity)</li>
+                                }
+                            </ul>
+                        </td>
+                        <td>@order.OrderItems.Sum(oi => oi.Quantity * oi.UnitPrice).ToString("C")</td>
+                        <td>
+                            @if (order.Status == "Pending")
+                            {
+                                <form asp-action="Cancel" method="post">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
